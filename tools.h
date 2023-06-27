@@ -47,6 +47,9 @@ void DrawGrid();
 void DrawInterface();
 void DrawAll();
 void moveWindow();
+void movePoint();
+void MakePolygon();
+void Update();
 void EventHandling();
 void init();
 sf::Vector2f ConvertXY(sf::Vector2f v) { return (v - CameraPos) / zoom; }
@@ -94,11 +97,11 @@ void SetVertexOfAxisLineY(float y) {
 // Buttons
 ////////////////////////////////////////////////////////////
 
-Button AddPointButton("�������� �����", [](){
+Button AddPointButton("Add point", [](){
     addPoint(0, 0);
     ActivePoint = &points[points.size() - 1];
 });
-Button DelPointButton("������� �����", [](){
+Button DelPointButton("Delete point", [](){
     if (ActivePoint != nullptr && ActivePoint != &MainPoint)
         for (auto i = points.begin(); i != points.end(); i++)
             if (*i == *ActivePoint) {
@@ -190,8 +193,40 @@ void moveWindow() {
     if (window.hasFocus() && mapMoved)
         CameraPos += sf::Vector2f(Mouse.getPosition(window) - MouseBuffer);
     MouseBuffer = Mouse.getPosition(window);
+}
+
+// ------------------------------------------------------------
+
+void movePoint() {
     if (ActiveHoldingPoint != nullptr)
-        *ActiveHoldingPoint = ConvertXY(sf::Vector2f(MouseBuffer));
+        *ActiveHoldingPoint = ConvertXY(sf::Vector2f(Mouse.getPosition(window)));
+}
+
+// ------------------------------------------------------------
+
+Point CenterOfPolygon;
+void MakePolygon() {
+    bool DoneSuccessfully = true;
+    CenterOfPolygon = {0, 0};
+    for (Point& cur: points)
+        CenterOfPolygon += cur;
+    CenterOfPolygon /= float(points.size());
+    sort(points.begin(), points.end(), [](Point& left, Point& right){
+        return atan2(left.x - CenterOfPolygon.x, left.y - CenterOfPolygon.y) < atan2(right.x - CenterOfPolygon.x, right.y - CenterOfPolygon.y);
+    });
+}
+
+// ------------------------------------------------------------
+
+void Update() {
+    moveWindow();
+    movePoint();
+    Point WasHolding; if (ActiveHoldingPoint != nullptr) WasHolding = *ActiveHoldingPoint;
+    MakePolygon();
+    if (ActiveHoldingPoint != nullptr)
+        for (Point& cur: points)
+            if (cur == WasHolding)
+                ActiveHoldingPoint = &cur;
 }
 
 // ------------------------------------------------------------
@@ -226,6 +261,8 @@ void EventHandling() {
         } else if (event.type == sf::Event::MouseButtonReleased) {
             mapMoved = false;
             ActiveHoldingPoint = nullptr;
+        } else if (event.type == sf::Event::KeyReleased) {
+            
         }
         AddPointButton.isActivated(event);
         DelPointButton.isActivated(event);

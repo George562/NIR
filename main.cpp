@@ -4,7 +4,7 @@ int main() {
     init();
 
     while (window.isOpen()) {
-        moveWindow();
+        Update();
         DrawAll();
         EventHandling();
     }
