@@ -1,6 +1,4 @@
-#pragma once
-#include <SFML\Network.hpp>
-#include <SFML\Graphics.hpp>
+#include "SFML-2.5.1/include/SFML/Graphics.hpp"
 #include <bits/stdc++.h>
 #include "scale.h"
 #include "Matrix.h"

@@ -1,4 +1,4 @@
-#include <SFML/Graphics.hpp>
+#include "SFML-2.5.1/include/SFML/Graphics.hpp"
 
 struct Rect {
     float PosX, PosY, Width, Height;

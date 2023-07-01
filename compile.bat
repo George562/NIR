@@ -1,1 +1,1 @@
-g++ main.cpp -o run -lsfml-graphics -lsfml-window -lsfml-system
+g++ main.cpp -o run -lsfml-graphics -lsfml-window -lsfml-system -I./SFML-2.5.1/include/ -L ./SFML-2.5.1/lib/
